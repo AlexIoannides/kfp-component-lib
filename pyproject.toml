@@ -1,12 +1,14 @@
 [project]
 name = "kfp_component_lib"
 version = "0.1.0.dev0"
-description = "The kfp_component_lib Python package."
+description = "A reusable component library for Kubeflow Pipelines."
 readme = "README.md"
 authors = [
-  { name="MY_NAME", email="MY@EMAIL.ADDRESS" },
+  { name="Alex Ioannides", email="alex@bodyworkml.com" },
 ]
-dependencies = []
+dependencies = [
+  "kfp==2.5.*",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -28,8 +30,8 @@ deploy = [
 ]
 
 [project.urls]
-"Homepage" = "LINK_TO_GITHUB_REPO"
-"Bug Tracker" = "LINK_TO_GITHUB_REPO_ISSUES_PAGE"
+"Homepage" = "https://github.com/AlexIoannides/kfp-component-lib"
+"Bug Tracker" = "https://github.com/AlexIoannides/kfp-component-lib/issues"
 
 [build-system]
 requires = ["setuptools>=68.0"]
