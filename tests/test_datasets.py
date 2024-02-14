@@ -1,4 +1,4 @@
-"""Tests for KFP dataset components."""
+"""Unit tests dataset related library code."""
 import numpy as np
 
 from kfp_component_lib.datasets import generate_numeric_data

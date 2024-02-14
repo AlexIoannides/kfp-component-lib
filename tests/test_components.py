@@ -1,4 +1,4 @@
-"""Tests for KFP dataset components."""
+"""Functional tests for KFP components."""
 import shutil
 
 import pandas as pd
@@ -14,7 +14,7 @@ local.init(runner=local.SubprocessRunner(use_venv=False), pipeline_root=_KFP_ROO
 def test_make_numeric_dataset_kfp_component():
     try:
         task = make_numeric_dataset(n_rows=10)
-        output_dataset = pd.read_parquet(task.outputs['data_out'].path)
+        output_dataset = pd.read_parquet(task.outputs["data_out"].path)
         assert output_dataset.shape == (10, 4)
     except Exception:
         assert False
