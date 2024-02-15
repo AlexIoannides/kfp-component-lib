@@ -97,6 +97,37 @@ def test_make_numeric_dataset_kfp_component():
 
 Which will replicate how Kubeflow Pipelines will run the component, albeit on the machine running the test. In this example the runner has been set to use a sub-process and the same virtual environment as the local development environment, but this can be changed to use a Docker runner or to use a sub-process that recreates a fresh virtual environment (be sure to build the package first using `nox -s build_and_deploy_pkg -- deploy=false`, if you want to use this option).
 
+### Composing Pipelines
+
+Once the package of components has been built, composing a pipeline is as easy as,
+
+```python
+from kfp import dsl
+
+from kfp_component_lib.components import make_numeric_dataset
+
+
+@dsl.pipeline
+def synthetic_data_pipeline(n_rows: int = 1000) -> None:
+    """Create synthetic datasets."""
+    task_1 = make_numeric_dataset(n_rows=n_rows)
+    task_2 = make_numeric_dataset(n_rows=n_rows)
+    task_2.after(task_1)
+```
+
+Which can be compiled using,
+
+```python
+from kfp import compiler
+
+
+compiler.Compiler().compile(
+    pipeline_func=synthetic_data_pipeline, package_path="pipeline.json"
+)
+```
+
+Ready for deployment!
+
 ### Baking the Package into a Container Image
 
 If you would like to include the package into the image used to run the component (as opposed to pip-install it into a generic Python image), then we include a Dockerfile togther with the `build_and_deploy_container_image` Nox task, that demonstrates how to do this while keeping the image version synchronised with the Python package. In this instance the example component definition listed above becomes,
