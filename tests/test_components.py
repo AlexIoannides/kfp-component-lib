@@ -1,4 +1,11 @@
-"""Functional tests for KFP components."""
+"""Functional tests for KFP components.
+
+These tests use the KFP local executor to test the components as if they were running in
+ a KFP container. The runner has been set to use a sub-process and the same virtual
+environment as the local dev environment, but this can be changed to use a Docker runner
+or to use a sub-process that recreates a fresh virtual environment (be sure to build the
+package first using `nox -s build_and_deploy_pkg -- deploy=false`).
+"""
 import shutil
 
 import pandas as pd

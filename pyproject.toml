@@ -1,6 +1,5 @@
 [project]
 name = "kfp_component_lib"
-version = "0.1.0.dev0"
 description = "A reusable component library for Kubeflow Pipelines."
 readme = "README.md"
 authors = [
@@ -12,6 +11,7 @@ dependencies = [
   "pandas==2.2.*",
   "pyarrow==15.0.*",
 ]
+dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = [
@@ -43,6 +43,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "kfp_component_lib.VERSION"}
 
 [tool.setuptools.packages.find]
 where = ["src"]

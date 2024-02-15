@@ -42,21 +42,40 @@ def check_types(session: nox.Session):
 
 
 @nox.session(reuse_venv=True)
-def build_and_deploy(session: nox.Session):
+def build_and_deploy_pkg(session: nox.Session):
     """Build wheel and deploy to PyPI."""
-    try:
-        from dotenv import load_dotenv
-
-        load_dotenv()
-    except ModuleNotFoundError:
-        session.warn("Expecting PYPI_USR and PYPI_PWD in local environment variables.")
-
-    try:
-        PYPI_USR = os.environ["PYPI_USR"]
-        PYPI_PWD = os.environ["PYPI_PWD"]
-    except KeyError as e:
-        session.error(f"{str(e)} not found in local environment variables.")
     session.install(".[deploy]")
-    session.run("rm", "-rf", "dist")
+    session.run("rm", "-rf", "dist", external=True)
     session.run("python", "-m", "build")
-    session.run("twine", "upload", "dist/*", "-u", PYPI_USR, "-p", PYPI_PWD)
+
+    if session.posargs and session.posargs[0] != "deploy=false":
+        try:
+            from dotenv import load_dotenv
+
+            load_dotenv()
+        except ModuleNotFoundError:
+            session.warn("Expecting PYPI_USR and PYPI_PWD in local env vars.")
+
+        try:
+            PYPI_USR = os.environ["PYPI_USR"]
+            PYPI_PWD = os.environ["PYPI_PWD"]
+        except KeyError as e:
+            session.error(f"{str(e)} not found in local environment variables.")
+
+        session.run("twine", "upload", "dist/*", "-u", PYPI_USR, "-p", PYPI_PWD)
+
+
+@nox.session(reuse_venv=True)
+def build_and_deploy_container_image(session: nox.Session):
+    """Build wheel and deploy to PyPI."""
+    session.install(".")
+    image_name = session.run(
+        "python",
+        "-c",
+        "from kfp_component_lib import KFP_CONTAINER_IMAGE; print(KFP_CONTAINER_IMAGE, end='')",  # noqa
+        silent=True,
+    )
+    image_name_str = str(image_name)
+    session.run("docker", "build", "-t", image_name_str, ".", external=True)
+    if session.posargs and session.posargs[0] != "deploy=false":
+        session.run("docker", "image", "push", image_name_str, external=True)
